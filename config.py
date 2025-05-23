@@ -12,3 +12,11 @@ output_filled_background_dir = os.path.join(base_dir, "filled/background_patches
 
 generated_orig_path = os.path.join(base_dir, "generated/original")
 generated_mask_path = os.path.join(base_dir, "generated/mask")
+
+min_circles=20
+max_circles=100
+min_radius=30
+max_radius=70
+blue_range=(100, 200)
+purple_range=(50, 150)
+color_variation = 20
