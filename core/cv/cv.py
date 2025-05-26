@@ -34,5 +34,6 @@ mask_path = 'C:\\Projects\\cell_detector\\data\\test\\mask\\e3c1442a-717f-41dd-b
 file_path = 'C:\\Projects\\cell_detector\\data\\test\\original\\e3c1442a-717f-41dd-bf97-81e1233ac9fa.png'
 result_path = '..\\..\\result\\cv_result.png'
 
+
 a, b = cv_detector(file_path, mask_path, result_path)
 print(a)
