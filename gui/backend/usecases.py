@@ -2,6 +2,7 @@ from pathlib import Path
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from core.cnn.cnn import cnn_detector
 from core.cv import cv_detector
 
 
@@ -25,7 +26,7 @@ class UseCases(QObject):
         return '', -1
 
     def cells_detect_cnn(self, file_path: str) -> (str, int):
-        return '', -1
+        return cnn_detector(file_path)
 
 
 
