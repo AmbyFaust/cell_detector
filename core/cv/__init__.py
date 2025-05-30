@@ -1,1 +1,1 @@
-from cv import cv_detector
+from .cv import cv_detector

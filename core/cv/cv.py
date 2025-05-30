@@ -1,39 +1,46 @@
+import os
+
 import cv2
 import numpy as np
 
-from skimage.measure import label, regionprops
-from sklearn.cluster import DBSCAN
 
+def cv_detector(image_path) -> (str, int):
+    img = cv2.imread(image_path)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray, (7, 7), 0)
+    _, binary = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    opening = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel, iterations=0)
+    _, threshold = cv2.threshold(opening, 150, 255, cv2.THRESH_BINARY_INV)
+    contours, _ = cv2.findContours(threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-def detect_cell_centers(mask):
-    labeled_mask = label(mask, connectivity=2)
-    regions = regionprops(labeled_mask)
-    return np.array([(int(region.centroid[1]), int(region.centroid[0])) for region in regions])
+    circles = []
 
+    for cnt in contours:
+        mask = np.zeros_like(gray)
+        cv2.drawContours(mask, [cnt], -1, 255, 1)
 
-def cv_detector(image_path, mask_path, result_path) -> (int, str):
-    mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
-    image = cv2.imread(image_path)
-    mask = cv2.GaussianBlur(
-        src=mask,
-        ksize=(3, 3),
-        sigmaX=0,
-    )
-    _, white_mask = cv2.threshold(mask, 250, 255, cv2.THRESH_BINARY)
-    centers = detect_cell_centers(white_mask)
-    for (x, y) in centers:
-        cv2.circle(image, (x, y), 10, (0, 0, 255), -1)
+        circles_tmp = cv2.HoughCircles(mask, cv2.HOUGH_GRADIENT, 1, 30, param1=150, param2=15, minRadius=30,
+                                       maxRadius=65)
 
-    cv2.imwrite(result_path, image)
-    return len(centers), result_path
+        if circles_tmp is not None:
+            circles_tmp = np.round(circles_tmp[0, :]).astype("int")
+            for c in circles_tmp:
+                if mask[c[1] - 1][c[0] - 1] == 0:
+                    circles.append(c)
 
+    circles = [circles]
+    counts = len(circles[0])
+    cimg = img.copy()
+    circles = np.uint16(np.around(circles))
+    for i in circles[0, :]:
+        cv2.circle(cimg, (i[0], i[1]), i[2], (0, 255, 0), 2)
+        cv2.circle(cimg, (i[0], i[1]), 2, (0, 0, 255), 3)
 
+    result_dir_path = '..\\..\\result'
+    cv_result_path = '..\\..\\result\\cv_result.png'
+    if not os.path.exists(result_dir_path):
+        os.mkdir(result_dir_path)
+    cv2.imwrite(cv_result_path, cimg)
 
-
-mask_path = 'C:\\Projects\\cell_detector\\data\\test\\mask\\e3c1442a-717f-41dd-bf97-81e1233ac9fa.png'
-file_path = 'C:\\Projects\\cell_detector\\data\\test\\original\\e3c1442a-717f-41dd-bf97-81e1233ac9fa.png'
-result_path = '..\\..\\result\\cv_result.png'
-
-
-a, b = cv_detector(file_path, mask_path, result_path)
-print(a)
+    return cv_result_path, counts
