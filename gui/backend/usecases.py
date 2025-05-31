@@ -5,6 +5,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from core.cnn.cnn import cnn_detector
 from core.cv import cv_detector
 from core.db.db import Database
+from core.ml.ml import ml_detector
 from generator.main import generate_images
 
 
@@ -27,7 +28,7 @@ class UseCases(QObject):
         return cv_detector(file_path)
 
     def cells_detect_ml(self, file_path: str) -> (str, int):
-        return '', -1
+        return ml_detector(file_path)
 
     def cells_detect_cnn(self, file_path: str) -> (str, int):
         return cnn_detector(file_path)

@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
         self.image_label.setFixedSize(500, 375)
         self.image_label.setFrameShape(QFrame.Box)  # Рамка вокруг изображения
         self.image_label.setAlignment(Qt.AlignCenter)
-        self.image_label.setText("Изображение 600x600")
+        self.image_label.setText("Изображение")
         self.image_label.setStyleSheet("background-color: #f0f0f0; font-size: 16px;")
 
         self.cv_count_label = QLabel('-')
@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         self.show_cnn_result_button.setVisible(False)
 
         self.upload_button = QPushButton('Загрузить изображение')
-        self.generic_button = QPushButton('Прогнать датасет и сгенерированные данные')
+        self.generic_button = QPushButton('Сгенерировать изображение')
         self.download_experiments_button = QPushButton('Выгрузить результаты экспериментов')
 
     def __create_layouts(self):

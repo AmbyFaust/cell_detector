@@ -20,7 +20,7 @@ def cv_detector(image_path) -> (str, int):
         mask = np.zeros_like(gray)
         cv2.drawContours(mask, [cnt], -1, 255, 1)
 
-        circles_tmp = cv2.HoughCircles(mask, cv2.HOUGH_GRADIENT, 1, 30, param1=150, param2=15, minRadius=30,
+        circles_tmp = cv2.HoughCircles(mask, cv2.HOUGH_GRADIENT, 1, 40, param1=150, param2=15, minRadius=30,
                                        maxRadius=65)
 
         if circles_tmp is not None:
