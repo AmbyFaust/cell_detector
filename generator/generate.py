@@ -63,12 +63,12 @@ def generate():
     if background is None or cells is None:
         raise ValueError("Не удалось загрузить изображения")
 
-    # 1. Случайное отражение
+    # Случайное отражение
     flip_code = choice([-1, 0, 1, None])  # -1, 0, 1 или нет отражения
     if flip_code is not None:
         cells = cv2.flip(cells, flip_code)
 
-    # 2. Наложение клеток на фон
+    # Наложение клеток на фон
     # Разделяем цветовые каналы и альфа-канал
     cells_bgr = cells[:, :, :3]
     alpha = cells[:, :, 3] / 255.0  # Нормализуем альфа-канал [0,1]
@@ -79,7 +79,7 @@ def generate():
     # Наложение с учетом прозрачности
     result = (background * (1 - alpha_3ch) + cells_bgr * alpha_3ch).astype(np.uint8)
 
-    # 3. Создаем бинарную маску
+    # Создаем бинарную маску
     _, binary_mask = cv2.threshold(alpha, 0.01, 255, cv2.THRESH_BINARY)
     binary_mask = binary_mask.astype(np.uint8)
 
@@ -90,3 +90,5 @@ def generate():
     # Сохраняем результаты
     cv2.imwrite(generated_orig_full_path, result)
     cv2.imwrite(generated_mask_full_path, binary_mask)
+
+    return generated_orig_full_path
